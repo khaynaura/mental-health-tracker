@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-&ot^$+*#$27f@v6d2w+k2hf(4k5h-@7&rw6&7l3fyf#or(1id%"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+PRODUCTION = os.getenv("PRODUCTION", False)
+DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "khayla-naura-mentalhealthtracker.pbp.cs.ui.ac.id"]
 
@@ -123,4 +125,4 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CSRF_TRUSTED_ORIGINS = ["localhost", "127.0.0.1", "http://khayla-naura-mentalhealthtracker.pbp.cs.ui.ac.id", "https://khayla-naura-mentalhealthtracker.pbp.cs.ui.ac.id"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost","http://127.0.0.1""http://khayla-naura-mentalhealthtracker.pbp.cs.ui.ac.id", "https://khayla-naura-mentalhealthtracker.pbp.cs.ui.ac.id"]
