@@ -13,18 +13,21 @@ from django.shortcuts import render, redirect   # Tambahkan import redirect di b
 from main.forms import MoodEntryForm
 from main.models import MoodEntry
 
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
+
 # Create your views here.
 @login_required(login_url='/login')
 
 def show_main(request):
-    mood_entries = MoodEntry.objects.all()
 
     context = {
     'name': request.user.username,
     'name': 'Khayla Naura Ulya Luqyana',
     'class': 'PBP A',
     'npm': '2306275310',
-    'mood_entries': mood_entries,
+
     'last_login': request.COOKIES['last_login'],
 }
 
@@ -43,11 +46,11 @@ def create_mood_entry(request):
     return render(request, "create_mood_entry.html", context)
 
 def show_xml(request):
-    data = MoodEntry.objects.all()
+    data = MoodEntry.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json(request):
-    data = MoodEntry.objects.all()
+    data = MoodEntry.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
@@ -114,3 +117,20 @@ def delete_mood(request, id):
     mood.delete()
     # Kembali ke halaman awal
     return HttpResponseRedirect(reverse('main:show_main'))
+
+@csrf_exempt
+@require_POST
+def add_mood_entry_ajax(request):
+    mood = request.POST.get("mood")
+    feelings = request.POST.get("feelings")
+    mood_intensity = request.POST.get("mood_intensity")
+    user = request.user
+
+    new_mood = MoodEntry(
+        mood=mood, feelings=feelings,
+        mood_intensity=mood_intensity,
+        user=user
+    )
+    new_mood.save()
+
+    return HttpResponse(b"CREATED", status=201)
